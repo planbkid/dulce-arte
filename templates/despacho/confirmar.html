@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block titulo %} · Confirmar entrega{% endblock %}
+{% block contenido %}
+<h2>Confirmar entrega — Pedido #{{ desp.pedido_id }}</h2>
+<p><strong>Cliente:</strong> {{ desp.pedido.cliente_nombre }}<br>
+<strong>Dirección:</strong> {{ desp.direccion }}</p>
+
+<form method="post" enctype="multipart/form-data" style="max-width:480px">
+  {% csrf_token %}
+  <p>Sube la <strong>firma digital o comprobante</strong> de recepción:</p>
+  {{ form.as_p }}
+  <button class="btn" type="submit">Confirmar entrega</button>
+  <a class="btn sec" href="{% url 'lista_despachos' %}">Cancelar</a>
+</form>
+{% endblock %}

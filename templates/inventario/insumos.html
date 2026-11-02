@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block titulo %} · Inventario{% endblock %}
+{% block contenido %}
+<h2>Inventario de insumos</h2>
+<table>
+  <tr><th>Insumo</th><th>Unidad</th><th>Stock</th><th>Mínimo</th><th>Estado</th></tr>
+  {% for i in insumos %}
+  <tr>
+    <td>{{ i.nombre }}</td>
+    <td>{{ i.get_unidad_display }}</td>
+    <td>{{ i.stock }}</td>
+    <td>{{ i.stock_minimo }}</td>
+    <td>{% if i.bajo_stock %}<span class="tag" style="background:#ffcdd2">⚠ Bajo stock</span>{% else %}OK{% endif %}</td>
+  </tr>
+  {% empty %}
+  <tr><td colspan="5">No hay insumos cargados.</td></tr>
+  {% endfor %}
+</table>
+
+<h2 style="margin-top:28px">Productos y su receta (BOM)</h2>
+{% for prod in productos %}
+  <div class="card">
+    <strong>{{ prod.nombre }}</strong> — ${{ prod.precio_base }}
+    <ul>
+      {% for item in prod.receta.all %}
+        <li>{{ item.cantidad }} {{ item.insumo.get_unidad_display }} de {{ item.insumo.nombre }}</li>
+      {% empty %}
+        <li><small>Sin receta definida</small></li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endfor %}
+{% endblock %}

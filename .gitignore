@@ -1,0 +1,19 @@
+# Entorno
+env/
+venv/
+*.pyc
+__pycache__/
+
+# Django
+*.sqlite3
+db.sqlite3
+staticfiles/
+media/
+
+# Variables de entorno (NO subir credenciales)
+.env
+
+# Sistema
+.DS_Store
+.idea/
+.vscode/

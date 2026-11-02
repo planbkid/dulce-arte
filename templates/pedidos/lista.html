@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block titulo %} · Pedidos{% endblock %}
+{% block contenido %}
+<h2>Listado de pedidos</h2>
+<table>
+  <tr><th>#</th><th>Cliente</th><th>Estado</th><th>Entrega</th><th>Total</th><th>Insumos</th></tr>
+  {% for p in pedidos %}
+  <tr>
+    <td>{{ p.id }}</td>
+    <td>{{ p.cliente_nombre }}</td>
+    <td>{{ p.get_estado_display }}</td>
+    <td>{{ p.fecha_entrega|date:"d/m/Y H:i" }}</td>
+    <td>${{ p.total }}</td>
+    <td>{% if p.insumos_descontados %}✓{% else %}—{% endif %}</td>
+  </tr>
+  {% empty %}
+  <tr><td colspan="6">No hay pedidos aún.</td></tr>
+  {% endfor %}
+</table>
+{% endblock %}

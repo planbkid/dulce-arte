@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% block titulo %} · Kanban{% endblock %}
+{% block contenido %}
+<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+  <h2>Tablero de Cocina</h2>
+  <a class="btn" href="{% url 'nuevo_pedido' %}">+ Nuevo pedido</a>
+</div>
+<p><small>Al mover un pedido a <b>En Preparación</b> se descuentan automáticamente los insumos (BOM).</small></p>
+
+<div class="board">
+  {% for col in columnas %}
+  <div class="col">
+    <h3>{{ col.titulo }} ({{ col.pedidos|length }})</h3>
+    {% for p in col.pedidos %}
+      <div class="card">
+        <strong>#{{ p.id }}</strong> — {{ p.cliente_nombre }}<br>
+        <small>Entrega: {{ p.fecha_entrega|date:"d/m H:i" }}</small><br>
+        <small>Total: ${{ p.total }}</small>
+        {% if p.insumos_descontados %}<span class="tag">insumos ✓</span>{% endif %}
+        <select onchange="mover({{ p.id }}, this.value)">
+          {% for val, lbl in estados %}
+            <option value="{{ val }}" {% if val == p.estado %}selected{% endif %}>{{ lbl }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    {% empty %}
+      <small>Sin pedidos</small>
+    {% endfor %}
+  </div>
+  {% endfor %}
+</div>
+
+<script>
+function getCookie(name) {
+  const v = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+  return v ? v.pop() : '';
+}
+async function mover(id, estado) {
+  const resp = await fetch(`/api/pedidos/${id}/mover_estado/`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
+    body: JSON.stringify({ estado })
+  });
+  const data = await resp.json();
+  if (!resp.ok) { alert(data.error || 'Error al mover el pedido'); }
+  location.reload();
+}
+</script>
+{% endblock %}

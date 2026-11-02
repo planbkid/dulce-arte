@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block titulo %} · Despacho{% endblock %}
+{% block contenido %}
+<div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+  <h2>Rutas de despacho</h2>
+  <a class="btn" href="{% url 'nuevo_despacho' %}">+ Nuevo despacho</a>
+</div>
+<table>
+  <tr><th>Pedido</th><th>Dirección</th><th>Repartidor</th><th>Estado</th><th>Firma</th><th>Acción</th></tr>
+  {% for d in despachos %}
+  <tr>
+    <td>#{{ d.pedido_id }} — {{ d.pedido.cliente_nombre }}</td>
+    <td>{{ d.direccion }}</td>
+    <td>{{ d.repartidor|default:"—" }}</td>
+    <td>{{ d.get_estado_display }}</td>
+    <td>{% if d.firma %}<a href="{{ d.firma.url }}" target="_blank">Ver</a>{% else %}—{% endif %}</td>
+    <td>
+      {% if d.estado != 'ENTREGADO' %}
+        <a class="btn sec" href="{% url 'confirmar_entrega' d.pk %}">Confirmar entrega</a>
+      {% else %}✓ Entregado{% endif %}
+    </td>
+  </tr>
+  {% empty %}
+  <tr><td colspan="6">No hay despachos.</td></tr>
+  {% endfor %}
+</table>
+{% endblock %}

@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dulce Arte{% block titulo %}{% endblock %}</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: system-ui, Segoe UI, Arial, sans-serif; margin: 0; background: #faf6f2; color: #3a2b24; }
+    header { background: #8d5524; color: #fff; padding: 12px 20px; display: flex; flex-wrap: wrap; gap: 8px; justify-content: space-between; align-items: center; }
+    header .brand { font-weight: 700; font-size: 18px; }
+    header nav a { color: #fff; margin-left: 14px; text-decoration: none; font-size: 14px; }
+    header nav a:hover { text-decoration: underline; }
+    main { padding: 20px; max-width: 1200px; margin: 0 auto; }
+    h2 { color: #6b3e1d; }
+    .btn { cursor: pointer; border: 0; background: #8d5524; color: #fff; border-radius: 6px; padding: 8px 14px; font-size: 14px; text-decoration: none; display: inline-block; }
+    .btn:hover { background: #6b3e1d; }
+    .btn.sec { background: #c98a52; }
+    table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; overflow: hidden; }
+    th, td { padding: 10px; text-align: left; border-bottom: 1px solid #eee; font-size: 14px; }
+    th { background: #f0e2d5; }
+    .msg { background: #e8f5e9; border: 1px solid #a5d6a7; padding: 10px; border-radius: 6px; margin-bottom: 12px; }
+    .board { display: flex; gap: 12px; overflow-x: auto; padding-bottom: 8px; }
+    .col { background: #f6ede4; border-radius: 10px; padding: 10px; min-width: 220px; flex: 1; }
+    .col h3 { margin: 0 0 10px; font-size: 13px; text-align: center; background: #e2cab3; padding: 6px; border-radius: 6px; color: #5a3517; }
+    .card { background: #fff; border: 1px solid #e3d3c5; border-radius: 8px; padding: 10px; margin-bottom: 8px; box-shadow: 0 1px 2px rgba(0,0,0,.06); }
+    .card small { color: #888; }
+    select, input, textarea { padding: 7px; border: 1px solid #ccc; border-radius: 6px; width: 100%; font-size: 14px; margin-top: 4px; }
+    form p { margin: 8px 0; }
+    .tag { background: #eee; border-radius: 4px; padding: 2px 6px; font-size: 12px; }
+  </style>
+</head>
+<body>
+  <header>
+    <span class="brand">🍰 Dulce Arte</span>
+    {% if user.is_authenticated %}
+    <nav>
+      <a href="{% url 'kanban' %}">Kanban</a>
+      <a href="{% url 'nuevo_pedido' %}">Nuevo pedido</a>
+      <a href="{% url 'lista_pedidos' %}">Pedidos</a>
+      <a href="{% url 'lista_insumos' %}">Inventario</a>
+      <a href="{% url 'lista_despachos' %}">Despacho</a>
+      <a href="/admin/">Admin</a>
+      <a href="{% url 'logout' %}">Salir ({{ user.username }})</a>
+    </nav>
+    {% endif %}
+  </header>
+  <main>
+    {% if messages %}
+      {% for m in messages %}<div class="msg">{{ m }}</div>{% endfor %}
+    {% endif %}
+    {% block contenido %}{% endblock %}
+  </main>
+</body>
+</html>

@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block titulo %} · Nuevo pedido{% endblock %}
+{% block contenido %}
+<h2>Nuevo pedido personalizado</h2>
+<form method="post" enctype="multipart/form-data" style="max-width:640px">
+  {% csrf_token %}
+
+  <h3>Datos del cliente y diseño</h3>
+  {{ form.as_p }}
+
+  <h3>Productos del pedido</h3>
+  {{ formset.management_form }}
+  <table>
+    <tr><th>Producto</th><th>Cantidad</th><th>Personalización</th><th>Quitar</th></tr>
+    {% for f in formset %}
+      {{ f.id }}
+      <tr>
+        <td>{{ f.producto }}</td>
+        <td>{{ f.cantidad }}</td>
+        <td>{{ f.personalizacion }}</td>
+        <td>{% if f.instance.pk %}{{ f.DELETE }}{% endif %}</td>
+      </tr>
+    {% endfor %}
+  </table>
+
+  <p style="margin-top:16px">
+    <button class="btn" type="submit">Guardar pedido</button>
+    <a class="btn sec" href="{% url 'kanban' %}">Cancelar</a>
+  </p>
+</form>
+{% endblock %}

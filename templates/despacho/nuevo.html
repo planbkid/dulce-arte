@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block titulo %} · Nuevo despacho{% endblock %}
+{% block contenido %}
+<h2>Nuevo despacho</h2>
+<form method="post" style="max-width:480px">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button class="btn" type="submit">Crear</button>
+  <a class="btn sec" href="{% url 'lista_despachos' %}">Cancelar</a>
+</form>
+{% endblock %}
