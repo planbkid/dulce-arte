@@ -156,9 +156,11 @@ LOGOUT_REDIRECT_URL = 'login'
 # Django REST Framework
 # -------------------------------------------------------------------
 REST_FRAMEWORK = {
+    # Autenticación por sesión: la API usa el mismo login que las páginas web.
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication',
     ],
+    # Por defecto, ningún endpoint es accesible sin iniciar sesión.
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
@@ -166,3 +168,40 @@ REST_FRAMEWORK = {
         'django_filters.rest_framework.DjangoFilterBackend',
     ],
 }
+
+
+# -------------------------------------------------------------------
+# Endurecimiento de seguridad
+# Cabeceras aplicadas siempre (sirven también sobre HTTP); el resto
+# se activa solo en producción (DEBUG=False) para no estorbar en local.
+# -------------------------------------------------------------------
+SECURE_CONTENT_TYPE_NOSNIFF = True        # impide que el navegador "adivine" tipos MIME
+X_FRAME_OPTIONS = 'DENY'                   # protege contra clickjacking (no permite iframes)
+SECURE_REFERRER_POLICY = 'same-origin'     # no filtra URLs internas a sitios externos
+
+if not DEBUG:
+    # Las cookies no son legibles por JavaScript (excepto el token CSRF,
+    # que el Kanban necesita leer para enviarlo en las peticiones fetch).
+    SESSION_COOKIE_HTTPONLY = True
+    CSRF_COOKIE_HTTPONLY = False
+    SESSION_COOKIE_SAMESITE = 'Lax'
+    CSRF_COOKIE_SAMESITE = 'Lax'
+
+    # HTTPS: activar SOLO si la instancia tiene certificado TLS.
+    # Se controla por variable de entorno para no romper el despliegue
+    # HTTP de AWS Academy (sin dominio ni certificado).
+    USAR_HTTPS = os.getenv('USAR_HTTPS', 'False') == 'True'
+    SESSION_COOKIE_SECURE = USAR_HTTPS     # cookie de sesión solo viaja por HTTPS
+    CSRF_COOKIE_SECURE = USAR_HTTPS        # cookie CSRF solo viaja por HTTPS
+    SECURE_SSL_REDIRECT = USAR_HTTPS       # redirige todo el tráfico a HTTPS
+    if USAR_HTTPS:
+        SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+        SECURE_HSTS_SECONDS = 31536000     # obliga HTTPS por 1 año (HSTS)
+        SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+        SECURE_HSTS_PRELOAD = True
+
+    # Impide desplegar en producción con la clave de ejemplo.
+    if SECRET_KEY == 'django-insecure-dev-key-cambiar-en-produccion':
+        raise RuntimeError(
+            'Define una SECRET_KEY real en el archivo .env antes de desplegar (DEBUG=False).'
+        )

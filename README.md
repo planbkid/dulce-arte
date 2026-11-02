@@ -97,6 +97,14 @@ despacho/        → Despacho con firma digital
 templates/       → frontend (base, login, kanban, pedidos, inventario, despacho)
 ```
 
-## 🔐 Roles de seguridad
-Grupos creados por `seed_demo`: **Cajero**, **Cocina**, **Despacho**. Asigna usuarios a los
-grupos desde el Django Admin para controlar el acceso.
+## 🔐 Seguridad
+- **Autenticación por sesión** en todas las vistas y en la API (nada es accesible sin login).
+- **Roles (grupos):** **Cajero** registra pedidos/despachos, **Cocina** mueve el Kanban,
+  **Despacho** confirma entregas. El superusuario tiene acceso total. Se asignan desde el
+  Django Admin. Los grupos los crea `seed_demo`.
+- **Endurecimiento de producción** (activo con `DEBUG=False`): cabeceras anti-clickjacking y
+  anti-MIME-sniffing, cookies `HttpOnly`/`SameSite`, y bloqueo de arranque si la `SECRET_KEY`
+  es la de ejemplo.
+- **HTTPS opcional:** pon `USAR_HTTPS=True` en el `.env` solo si la instancia tiene certificado
+  TLS (activa cookies seguras, redirección SSL y HSTS).
+- **Validación de subidas:** las imágenes (diseño y firma) se limitan a 5 MB.

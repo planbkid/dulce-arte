@@ -1,22 +1,21 @@
-"""Vistas (templates) de pedidos: tablero Kanban y alta de pedidos."""
+"""Vistas (páginas HTML) de pedidos: tablero Kanban y alta de pedidos."""
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 
+from usuarios.roles import rol_requerido
 from .forms import PedidoForm, DetallePedidoFormSet
 from .models import Pedido
 
 
 @login_required
 def kanban(request):
-    """Tablero Kanban de cocina con los pedidos agrupados por estado."""
-    columnas = []
-    for valor, etiqueta in Pedido.ESTADOS:
-        columnas.append({
-            'clave': valor,
-            'titulo': etiqueta,
-            'pedidos': Pedido.objects.filter(estado=valor),
-        })
+    """Muestra el tablero Kanban con los pedidos agrupados por estado de cocina."""
+    columnas = [
+        {'clave': valor, 'titulo': etiqueta,
+         'pedidos': Pedido.objects.filter(estado=valor)}
+        for valor, etiqueta in Pedido.ESTADOS
+    ]
     return render(request, 'pedidos/kanban.html', {
         'columnas': columnas,
         'estados': Pedido.ESTADOS,
@@ -25,17 +24,21 @@ def kanban(request):
 
 @login_required
 def lista_pedidos(request):
-    pedidos = Pedido.objects.all()
-    return render(request, 'pedidos/lista.html', {'pedidos': pedidos})
+    """Listado tabular de todos los pedidos."""
+    return render(request, 'pedidos/lista.html', {'pedidos': Pedido.objects.all()})
 
 
-@login_required
+@rol_requerido('Cajero')
 def nuevo_pedido(request):
-    """Alta de pedido personalizado con sus líneas de producto (cotización)."""
+    """Alta de un pedido personalizado con sus líneas de producto (cotización).
+
+    Solo el rol Cajero (o un superusuario) puede registrar pedidos.
+    """
     if request.method == 'POST':
         form = PedidoForm(request.POST, request.FILES)
         formset = DetallePedidoFormSet(request.POST)
         if form.is_valid() and formset.is_valid():
+            # Guarda el pedido junto a sus detalles y recalcula el total.
             pedido = form.save(commit=False)
             pedido.creado_por = request.user
             pedido.save()
