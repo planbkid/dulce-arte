@@ -3,8 +3,23 @@
 **EVA 3 — Desarrollo Backend** · Alumno: **Cristóbal Barriga** · Grupo 3
 Django + Django REST Framework + PostgreSQL + AWS EC2
 
-## 🌐 Aplicación desplegada
-> **http://\<IP_PUBLICA_EC2\>/**  ← *(reemplazar por la IP pública real de AWS)*
+## 🌐 Aplicación desplegada (AWS EC2)
+> **http://3.218.109.138/**
+
+> ⚠️ Instancia de **AWS Academy**: al reiniciar el Lab la IP pública cambia. Si no carga,
+> es porque el Lab está detenido o la IP cambió (ver `DESPLIEGUE_AWS.md`).
+
+### 👤 Usuarios y roles (demo)
+| Usuario | Rol |
+|---|---|
+| `admin` | Superusuario (acceso total + Django Admin) |
+| `cajero1` | Cajero (registra pedidos y despachos) |
+| `cocina1` | Cocina (mueve el tablero Kanban) |
+| `despacho1` | Despacho (confirma entregas con firma) |
+
+> 🔑 Las contraseñas se entregan al docente durante la defensa (no se publican por seguridad).
+
+- Panel de administración: **http://3.218.109.138/admin/**
 
 ---
 
