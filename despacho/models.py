@@ -1,4 +1,4 @@
-"""Modelo de despacho: ruta de entrega con confirmación por firma digital."""
+"""modelo de despacho: ruta de entrega con confirmacion por firma digital."""
 from django.conf import settings
 from django.db import models
 

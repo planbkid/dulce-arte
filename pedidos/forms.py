@@ -1,4 +1,4 @@
-"""Formularios de pedidos."""
+"""formularios de pedidos."""
 from django import forms
 from django.forms import inlineformset_factory
 
@@ -7,7 +7,7 @@ from .models import Pedido, DetallePedido
 
 
 class PedidoForm(forms.ModelForm):
-    """Datos del cliente, diseño personalizado y fecha de entrega del pedido."""
+    """datos del cliente, diseño personalizado y fecha de entrega."""
     class Meta:
         model = Pedido
         fields = [
@@ -23,15 +23,15 @@ class PedidoForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # El input datetime-local envía el formato 'YYYY-MM-DDThh:mm'.
+        # el input datetime-local envia el formato 'yyyy-mm-ddThh:mm'
         self.fields['fecha_entrega'].input_formats = ['%Y-%m-%dT%H:%M']
 
     def clean_imagen_referencia(self):
-        # Valida el tamaño de la imagen de referencia subida.
+        # valida el tamaño de la imagen de referencia
         return validar_imagen(self.cleaned_data.get('imagen_referencia'))
 
 
-# Formset para capturar las líneas (productos) del pedido en el mismo formulario.
+# formset para capturar las lineas (productos) del pedido en el mismo form
 DetallePedidoFormSet = inlineformset_factory(
     Pedido,
     DetallePedido,

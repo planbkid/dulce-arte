@@ -1,4 +1,4 @@
-"""Django Admin personalizado — despacho."""
+"""django admin personalizado - despacho."""
 from django.contrib import admin
 
 from .models import Despacho

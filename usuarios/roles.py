@@ -1,4 +1,4 @@
-"""Control de acceso por roles (grupos de Django: Cajero, Cocina, Despacho)."""
+"""control de acceso por roles (grupos: cajero, cocina, despacho)."""
 from functools import wraps
 
 from django.contrib.auth.decorators import login_required
@@ -6,7 +6,7 @@ from django.core.exceptions import PermissionDenied
 
 
 def tiene_rol(user, *roles):
-    """Retorna True si el usuario es superusuario o pertenece a alguno de los roles dados."""
+    """true si es superusuario o pertenece a alguno de los roles."""
     if not user.is_authenticated:
         return False
     if user.is_superuser:
@@ -15,14 +15,12 @@ def tiene_rol(user, *roles):
 
 
 def rol_requerido(*roles):
-    """Decorador de vista: exige sesión iniciada y uno de los roles indicados.
-
-    Sin sesión -> redirige al login. Con sesión pero sin el rol -> 403.
-    """
+    """decorador: exige sesion iniciada y uno de los roles dados."""
     def decorator(view):
         @wraps(view)
         @login_required
         def _wrapped(request, *args, **kwargs):
+            # sin el rol -> 403; sin sesion login_required ya redirige
             if not tiene_rol(request.user, *roles):
                 raise PermissionDenied
             return view(request, *args, **kwargs)

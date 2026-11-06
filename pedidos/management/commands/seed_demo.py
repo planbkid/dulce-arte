@@ -1,8 +1,8 @@
 """
-Carga datos de demostración para Dulce Arte:
-grupos/roles, insumos, productos con su receta (BOM) y pedidos de ejemplo.
+carga datos de demostracion para dulce arte:
+roles, insumos, productos con su receta (bom) y pedidos de ejemplo.
 
-Uso:
+uso:
     python manage.py seed_demo
 """
 from datetime import timedelta
@@ -21,12 +21,12 @@ class Command(BaseCommand):
     help = 'Carga datos de demostración (roles, insumos, productos, pedidos).'
 
     def handle(self, *args, **options):
-        # ---- Roles (grupos) ----
+        # ---- roles (grupos) ----
         for rol in ['Cajero', 'Cocina', 'Despacho']:
             Group.objects.get_or_create(name=rol)
         self.stdout.write(self.style.SUCCESS('Roles creados: Cajero, Cocina, Despacho'))
 
-        # ---- Insumos ----
+        # ---- insumos ----
         insumos = {
             'Harina':   dict(unidad='g',  stock=20000, stock_minimo=2000, costo_unitario=Decimal('1.5')),
             'Azúcar':   dict(unidad='g',  stock=15000, stock_minimo=1500, costo_unitario=Decimal('1.2')),
@@ -39,7 +39,7 @@ class Command(BaseCommand):
             objs[nombre], _ = Insumo.objects.get_or_create(nombre=nombre, defaults=data)
         self.stdout.write(self.style.SUCCESS(f'{len(objs)} insumos cargados'))
 
-        # ---- Productos + receta (BOM) ----
+        # ---- productos + receta (bom) ----
         torta, _ = Producto.objects.get_or_create(
             nombre='Torta de Chocolate',
             defaults=dict(descripcion='Torta clásica de chocolate', precio_base=Decimal('18000')),
@@ -60,7 +60,7 @@ class Command(BaseCommand):
             )
         self.stdout.write(self.style.SUCCESS('Productos y recetas (BOM) cargados'))
 
-        # ---- Pedidos de ejemplo ----
+        # ---- pedidos de ejemplo ----
         if not Pedido.objects.exists():
             p1 = Pedido.objects.create(
                 cliente_nombre='María Pérez', cliente_telefono='+56912345678',

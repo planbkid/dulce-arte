@@ -1,4 +1,4 @@
-"""Modelos de pedidos: pedido personalizado, detalle y lógica Kanban + BOM."""
+"""modelos de pedidos: pedido personalizado, detalle y logica kanban + bom."""
 from collections import defaultdict
 from decimal import Decimal
 
@@ -9,12 +9,12 @@ from inventario.models import Insumo, Producto
 
 
 class StockInsuficiente(Exception):
-    """Se lanza cuando no hay suficiente insumo para preparar un pedido."""
+    """se lanza cuando no hay suficiente insumo para preparar un pedido."""
     pass
 
 
 class Pedido(models.Model):
-    # Estados del tablero Kanban de cocina
+    # estados del tablero kanban de cocina
     RECIBIDO = 'RECIBIDO'
     PREPARACION = 'PREPARACION'
     HORNEADO = 'HORNEADO'
@@ -48,7 +48,7 @@ class Pedido(models.Model):
         return f"Pedido #{self.id} - {self.cliente_nombre}"
 
     def recalcular_total(self):
-        """Suma los subtotales de los detalles y guarda el total."""
+        """suma los subtotales de los detalles y guarda el total."""
         total = sum((d.subtotal() for d in self.detalles.all()), Decimal('0'))
         self.total = total
         self.save(update_fields=['total'])
@@ -56,21 +56,21 @@ class Pedido(models.Model):
 
     def descontar_insumos(self):
         """
-        Descuenta el inventario según la Lista de Materiales (BOM) de cada
-        producto del pedido. Se ejecuta UNA sola vez, al pasar a 'En Preparación'.
-        Lanza StockInsuficiente si falta algún insumo.
+        descuenta el inventario segun la receta (bom) de cada producto.
+        se ejecuta una sola vez, al pasar a 'en preparacion'.
+        lanza stockinsuficiente si falta algun insumo.
         """
         if self.insumos_descontados:
             return
 
-        # 1) Calcular cuánto se necesita de cada insumo
+        # 1) calcular cuanto se necesita de cada insumo
         requerimientos = defaultdict(Decimal)
         for det in self.detalles.select_related('producto'):
             for item in det.producto.receta.all():
                 requerimientos[item.insumo_id] += item.cantidad * det.cantidad
 
         with transaction.atomic():
-            # 2) Validar que haya stock suficiente (bloqueando filas)
+            # 2) validar que haya stock suficiente (bloqueando filas)
             for insumo_id, cant in requerimientos.items():
                 insumo = Insumo.objects.select_for_update().get(pk=insumo_id)
                 if insumo.stock < cant:
@@ -78,7 +78,7 @@ class Pedido(models.Model):
                         f"Stock insuficiente de '{insumo.nombre}': "
                         f"se necesitan {cant} {insumo.unidad} y hay {insumo.stock}."
                     )
-            # 3) Descontar
+            # 3) descontar
             for insumo_id, cant in requerimientos.items():
                 insumo = Insumo.objects.select_for_update().get(pk=insumo_id)
                 insumo.stock -= cant
@@ -89,7 +89,7 @@ class Pedido(models.Model):
 
 
 class DetallePedido(models.Model):
-    """Línea de un pedido: un producto, su cantidad y personalización."""
+    """linea de un pedido: un producto, su cantidad y personalizacion."""
     pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE, related_name='detalles')
     producto = models.ForeignKey(Producto, on_delete=models.PROTECT)
     cantidad = models.PositiveIntegerField(default=1)

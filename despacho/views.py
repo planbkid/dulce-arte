@@ -1,4 +1,4 @@
-"""Vistas (páginas HTML) de despacho: rutas y confirmación con firma digital."""
+"""vistas (paginas html) de despacho: rutas y confirmacion con firma digital."""
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
@@ -11,14 +11,14 @@ from .models import Despacho
 
 @login_required
 def lista_despachos(request):
-    """Listado de despachos con su estado y firma asociada."""
+    """listado de despachos con su estado y firma asociada."""
     despachos = Despacho.objects.select_related('pedido', 'repartidor').all()
     return render(request, 'despacho/lista.html', {'despachos': despachos})
 
 
 @rol_requerido('Cajero', 'Despacho')
 def nuevo_despacho(request):
-    """Crea una ruta de despacho para un pedido."""
+    """crea una ruta de despacho para un pedido."""
     if request.method == 'POST':
         form = DespachoForm(request.POST)
         if form.is_valid():
@@ -32,15 +32,12 @@ def nuevo_despacho(request):
 
 @rol_requerido('Despacho')
 def confirmar_entrega(request, pk):
-    """Sube la firma digital / comprobante y marca el despacho como entregado.
-
-    Solo el rol Despacho (o superusuario) puede confirmar entregas.
-    """
+    """sube la firma / comprobante y marca el despacho como entregado (rol despacho)."""
     desp = get_object_or_404(Despacho, pk=pk)
     if request.method == 'POST':
         form = ConfirmarEntregaForm(request.POST, request.FILES, instance=desp)
         if form.is_valid():
-            # Registra firma, estado, fecha real y repartidor que confirma.
+            # registra firma, estado, fecha real y repartidor que confirma
             desp = form.save(commit=False)
             desp.estado = Despacho.ENTREGADO
             desp.fecha_entrega_real = timezone.now()

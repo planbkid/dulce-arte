@@ -1,4 +1,4 @@
-"""Rutas de despacho."""
+"""rutas de despacho."""
 from django.urls import path
 
 from . import views

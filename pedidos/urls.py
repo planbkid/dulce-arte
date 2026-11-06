@@ -1,4 +1,4 @@
-"""Rutas (templates) de pedidos."""
+"""rutas (templates) de pedidos."""
 from django.urls import path
 
 from . import views

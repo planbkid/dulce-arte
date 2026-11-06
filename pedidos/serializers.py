@@ -1,4 +1,4 @@
-"""Serializers DRF para pedidos."""
+"""serializers drf para pedidos."""
 from rest_framework import serializers
 
 from .models import Pedido, DetallePedido

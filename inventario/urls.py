@@ -1,4 +1,4 @@
-"""Rutas de inventario."""
+"""rutas de inventario."""
 from django.urls import path
 
 from . import views

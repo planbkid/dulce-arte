@@ -31,7 +31,7 @@ entre la toma de pedidos personalizados, el inventario de insumos y los tiempos 
 
 ```bash
 # 1. Clonar
-git clone https://github.com/<tu-usuario>/dulce-arte.git
+git clone https://github.com/planbkid/dulce-arte.git
 cd dulce-arte
 
 # 2. Entorno virtual

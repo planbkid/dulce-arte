@@ -1,9 +1,9 @@
-"""Modelos de inventario: insumos, productos y la Lista de Materiales (BOM)."""
+"""modelos de inventario: insumos, productos y la lista de materiales (bom)."""
 from django.db import models
 
 
 class Insumo(models.Model):
-    """Materia prima de bodega (harina, azúcar, crema, etc.)."""
+    """materia prima de bodega (harina, azucar, crema, etc.)."""
     UNIDADES = [
         ('g', 'Gramos'),
         ('kg', 'Kilogramos'),
@@ -25,12 +25,12 @@ class Insumo(models.Model):
 
     @property
     def bajo_stock(self):
-        """True si el stock llegó al mínimo o menos (para alertas)."""
+        """true si el stock llego al minimo o menos (para alertas)."""
         return self.stock <= self.stock_minimo
 
 
 class Producto(models.Model):
-    """Producto de pastelería que se vende (torta, postre, etc.)."""
+    """producto de pasteleria que se vende (torta, postre, etc.)."""
     nombre = models.CharField(max_length=120)
     descripcion = models.TextField(blank=True)
     precio_base = models.DecimalField(max_digits=10, decimal_places=2, default=0)
@@ -44,7 +44,7 @@ class Producto(models.Model):
 
 
 class ProductoInsumo(models.Model):
-    """Lista de Materiales (BOM): qué insumos y cuánto consume un producto."""
+    """lista de materiales (bom): que insumos y cuanto consume un producto."""
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE, related_name='receta')
     insumo = models.ForeignKey(Insumo, on_delete=models.PROTECT)
     cantidad = models.DecimalField(max_digits=10, decimal_places=2)

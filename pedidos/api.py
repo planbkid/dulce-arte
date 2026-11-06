@@ -1,4 +1,4 @@
-"""API REST (DRF) de pedidos — usada por el tablero Kanban asíncrono."""
+"""api rest (drf) de pedidos - usada por el tablero kanban asincrono."""
 from rest_framework import viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
@@ -9,17 +9,16 @@ from .serializers import PedidoSerializer
 
 
 class PedidoViewSet(viewsets.ModelViewSet):
-    """CRUD de pedidos vía API + acción para avanzar el estado en el Kanban."""
+    """crud de pedidos por api + accion para avanzar el estado en el kanban."""
     queryset = Pedido.objects.all().order_by('fecha_entrega')
     serializer_class = PedidoSerializer
     filterset_fields = ['estado']
 
     @action(detail=True, methods=['post'])
     def mover_estado(self, request, pk=None):
-        """Cambia el estado del pedido en el Kanban.
+        """cambia el estado del pedido en el kanban (solo rol cocina).
 
-        Solo el rol Cocina (o superusuario) puede moverlo. Al pasar a
-        'En Preparación' se descuentan los insumos según la BOM (una sola vez).
+        al pasar a 'en preparacion' descuenta los insumos segun la bom.
         """
         if not tiene_rol(request.user, 'Cocina'):
             return Response(
@@ -30,11 +29,11 @@ class PedidoViewSet(viewsets.ModelViewSet):
         pedido = self.get_object()
         nuevo = request.data.get('estado')
 
-        # Valida que el estado recibido sea uno de los definidos.
+        # valida que el estado recibido sea uno de los definidos
         if nuevo not in dict(Pedido.ESTADOS):
             return Response({'error': 'Estado inválido.'}, status=400)
 
-        # Regla de negocio: descontar inventario al iniciar la preparación.
+        # regla de negocio: descontar inventario al iniciar la preparacion
         if nuevo == Pedido.PREPARACION and not pedido.insumos_descontados:
             try:
                 pedido.descontar_insumos()

@@ -1,6 +1,6 @@
 """
-Django settings for dulce_arte project — EVA3 Backend (Proyecto 3 "Dulce Arte").
-Alumno: Cristóbal Barriga · Grupo 3
+settings de django para el proyecto dulce_arte (eva3 backend, proyecto 3).
+alumno: cristobal barriga - grupo 3
 """
 
 import os
@@ -10,11 +10,11 @@ from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Carga variables desde el archivo .env (si existe)
+# carga variables desde el archivo .env si existe
 load_dotenv(BASE_DIR / '.env')
 
 # -------------------------------------------------------------------
-# Seguridad / entorno
+# seguridad / entorno
 # -------------------------------------------------------------------
 SECRET_KEY = os.getenv(
     'SECRET_KEY',
@@ -23,19 +23,19 @@ SECRET_KEY = os.getenv(
 
 DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
-# ALLOWED_HOSTS se lee como lista separada por comas en el .env
+# hosts permitidos, separados por comas en el .env
 ALLOWED_HOSTS = [
     h.strip() for h in os.getenv('ALLOWED_HOSTS', '127.0.0.1,localhost').split(',') if h.strip()
 ]
 
-# En AWS detrás de Nginx, confiar en el origen https/http de la IP pública
+# en aws detras de nginx, confiar en el origen de la ip publica
 CSRF_TRUSTED_ORIGINS = [
     o.strip() for o in os.getenv('CSRF_TRUSTED_ORIGINS', '').split(',') if o.strip()
 ]
 
 
 # -------------------------------------------------------------------
-# Aplicaciones
+# aplicaciones
 # -------------------------------------------------------------------
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -45,11 +45,11 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    # Terceros
+    # terceros
     'rest_framework',
     'django_filters',
 
-    # Apps del proyecto
+    # apps del proyecto
     'usuarios',
     'inventario',
     'pedidos',
@@ -87,10 +87,9 @@ WSGI_APPLICATION = 'dulce_arte.wsgi.application'
 
 
 # -------------------------------------------------------------------
-# Base de datos
-# Usa PostgreSQL cuando hay credenciales en .env (local / AWS).
-# Si no hay DB_NAME definido, cae a SQLite para que el proyecto
-# arranque en cualquier parte sin configuración previa.
+# base de datos
+# usa postgresql cuando hay credenciales en el .env (local / aws).
+# si no hay db_name definido, cae a sqlite para arrancar sin config.
 # -------------------------------------------------------------------
 if os.getenv('DB_NAME'):
     DATABASES = {
@@ -113,7 +112,7 @@ else:
 
 
 # -------------------------------------------------------------------
-# Validación de contraseñas
+# validacion de contraseñas
 # -------------------------------------------------------------------
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
@@ -124,7 +123,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 # -------------------------------------------------------------------
-# Internacionalización
+# internacionalizacion
 # -------------------------------------------------------------------
 LANGUAGE_CODE = 'es-cl'
 TIME_ZONE = 'America/Santiago'
@@ -133,7 +132,7 @@ USE_TZ = True
 
 
 # -------------------------------------------------------------------
-# Archivos estáticos y media
+# archivos estaticos y media
 # -------------------------------------------------------------------
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
@@ -145,7 +144,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 # -------------------------------------------------------------------
-# Autenticación / sesiones
+# autenticacion / sesiones
 # -------------------------------------------------------------------
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'kanban'
@@ -153,14 +152,14 @@ LOGOUT_REDIRECT_URL = 'login'
 
 
 # -------------------------------------------------------------------
-# Django REST Framework
+# django rest framework
 # -------------------------------------------------------------------
 REST_FRAMEWORK = {
-    # Autenticación por sesión: la API usa el mismo login que las páginas web.
+    # autenticacion por sesion: la api usa el mismo login que las paginas
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.SessionAuthentication',
     ],
-    # Por defecto, ningún endpoint es accesible sin iniciar sesión.
+    # por defecto ningun endpoint es accesible sin iniciar sesion
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
@@ -171,36 +170,36 @@ REST_FRAMEWORK = {
 
 
 # -------------------------------------------------------------------
-# Endurecimiento de seguridad
-# Cabeceras aplicadas siempre (sirven también sobre HTTP); el resto
-# se activa solo en producción (DEBUG=False) para no estorbar en local.
+# endurecimiento de seguridad
+# cabeceras siempre activas (sirven sobre http); el resto solo en
+# produccion (debug=false) para no estorbar en local.
 # -------------------------------------------------------------------
-SECURE_CONTENT_TYPE_NOSNIFF = True        # impide que el navegador "adivine" tipos MIME
-X_FRAME_OPTIONS = 'DENY'                   # protege contra clickjacking (no permite iframes)
-SECURE_REFERRER_POLICY = 'same-origin'     # no filtra URLs internas a sitios externos
+SECURE_CONTENT_TYPE_NOSNIFF = True        # evita que el navegador adivine tipos mime
+X_FRAME_OPTIONS = 'DENY'                   # protege contra clickjacking (sin iframes)
+SECURE_REFERRER_POLICY = 'same-origin'     # no filtra urls internas a sitios externos
 
 if not DEBUG:
-    # Las cookies no son legibles por JavaScript (excepto el token CSRF,
-    # que el Kanban necesita leer para enviarlo en las peticiones fetch).
+    # cookies no legibles por js (salvo el token csrf, que el kanban
+    # necesita leer para enviarlo en las peticiones fetch)
     SESSION_COOKIE_HTTPONLY = True
     CSRF_COOKIE_HTTPONLY = False
     SESSION_COOKIE_SAMESITE = 'Lax'
     CSRF_COOKIE_SAMESITE = 'Lax'
 
-    # HTTPS: activar SOLO si la instancia tiene certificado TLS.
-    # Se controla por variable de entorno para no romper el despliegue
-    # HTTP de AWS Academy (sin dominio ni certificado).
+    # https: activar solo si la instancia tiene certificado tls.
+    # se controla por variable de entorno para no romper el despliegue
+    # http de aws academy (sin dominio ni certificado).
     USAR_HTTPS = os.getenv('USAR_HTTPS', 'False') == 'True'
-    SESSION_COOKIE_SECURE = USAR_HTTPS     # cookie de sesión solo viaja por HTTPS
-    CSRF_COOKIE_SECURE = USAR_HTTPS        # cookie CSRF solo viaja por HTTPS
-    SECURE_SSL_REDIRECT = USAR_HTTPS       # redirige todo el tráfico a HTTPS
+    SESSION_COOKIE_SECURE = USAR_HTTPS     # cookie de sesion solo por https
+    CSRF_COOKIE_SECURE = USAR_HTTPS        # cookie csrf solo por https
+    SECURE_SSL_REDIRECT = USAR_HTTPS       # redirige todo el trafico a https
     if USAR_HTTPS:
         SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-        SECURE_HSTS_SECONDS = 31536000     # obliga HTTPS por 1 año (HSTS)
+        SECURE_HSTS_SECONDS = 31536000     # obliga https por 1 año (hsts)
         SECURE_HSTS_INCLUDE_SUBDOMAINS = True
         SECURE_HSTS_PRELOAD = True
 
-    # Impide desplegar en producción con la clave de ejemplo.
+    # impide desplegar en produccion con la clave de ejemplo
     if SECRET_KEY == 'django-insecure-dev-key-cambiar-en-produccion':
         raise RuntimeError(
             'Define una SECRET_KEY real en el archivo .env antes de desplegar (DEBUG=False).'

@@ -31,17 +31,21 @@
 </div>
 
 <script>
+// lee una cookie por nombre (se usa para el token csrf)
 function getCookie(name) {
   const v = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
   return v ? v.pop() : '';
 }
+// llama a la api para cambiar el estado del pedido en el kanban
 async function mover(id, estado) {
   const resp = await fetch(`/api/pedidos/${id}/mover_estado/`, {
     method: 'POST',
+    // csrf obligatorio porque la sesion autentica la peticion
     headers: { 'Content-Type': 'application/json', 'X-CSRFToken': getCookie('csrftoken') },
     body: JSON.stringify({ estado })
   });
   const data = await resp.json();
+  // si falta stock o no hay permiso, la api responde con error
   if (!resp.ok) { alert(data.error || 'Error al mover el pedido'); }
   location.reload();
 }

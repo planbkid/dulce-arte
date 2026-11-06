@@ -48,7 +48,7 @@ GRANT ALL ON SCHEMA public TO dulce_user;
 ## 5. Clonar y configurar el proyecto
 ```bash
 cd ~
-git clone https://github.com/<tu-usuario>/dulce-arte.git
+git clone https://github.com/planbkid/dulce-arte.git
 cd dulce-arte
 python3 -m venv env
 source env/bin/activate

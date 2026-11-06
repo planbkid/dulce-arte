@@ -1,4 +1,4 @@
-"""Vistas (páginas HTML) de pedidos: tablero Kanban y alta de pedidos."""
+"""vistas (paginas html) de pedidos: tablero kanban y alta de pedidos."""
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
@@ -10,7 +10,7 @@ from .models import Pedido
 
 @login_required
 def kanban(request):
-    """Muestra el tablero Kanban con los pedidos agrupados por estado de cocina."""
+    """tablero kanban con los pedidos agrupados por estado de cocina."""
     columnas = [
         {'clave': valor, 'titulo': etiqueta,
          'pedidos': Pedido.objects.filter(estado=valor)}
@@ -24,21 +24,18 @@ def kanban(request):
 
 @login_required
 def lista_pedidos(request):
-    """Listado tabular de todos los pedidos."""
+    """listado tabular de todos los pedidos."""
     return render(request, 'pedidos/lista.html', {'pedidos': Pedido.objects.all()})
 
 
 @rol_requerido('Cajero')
 def nuevo_pedido(request):
-    """Alta de un pedido personalizado con sus líneas de producto (cotización).
-
-    Solo el rol Cajero (o un superusuario) puede registrar pedidos.
-    """
+    """alta de un pedido personalizado con sus lineas (solo rol cajero)."""
     if request.method == 'POST':
         form = PedidoForm(request.POST, request.FILES)
         formset = DetallePedidoFormSet(request.POST)
         if form.is_valid() and formset.is_valid():
-            # Guarda el pedido junto a sus detalles y recalcula el total.
+            # guarda el pedido con sus detalles y recalcula el total
             pedido = form.save(commit=False)
             pedido.creado_por = request.user
             pedido.save()

@@ -1,4 +1,4 @@
-"""Django Admin personalizado — inventario."""
+"""django admin personalizado - inventario."""
 from django.contrib import admin
 
 from .models import Insumo, Producto, ProductoInsumo
@@ -17,7 +17,7 @@ class InsumoAdmin(admin.ModelAdmin):
 
 
 class ProductoInsumoInline(admin.TabularInline):
-    """Permite definir la receta (BOM) directamente al editar el producto."""
+    """define la receta (bom) al editar el producto."""
     model = ProductoInsumo
     extra = 1
     autocomplete_fields = ('insumo',)

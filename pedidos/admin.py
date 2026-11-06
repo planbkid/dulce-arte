@@ -1,4 +1,4 @@
-"""Django Admin personalizado — pedidos."""
+"""django admin personalizado - pedidos."""
 from django.contrib import admin
 
 from .models import Pedido, DetallePedido
@@ -22,6 +22,6 @@ class PedidoAdmin(admin.ModelAdmin):
     readonly_fields = ('fecha_creacion', 'total', 'insumos_descontados')
 
     def save_related(self, request, form, formsets, change):
-        """Recalcula el total del pedido después de guardar sus detalles."""
+        # recalcula el total del pedido tras guardar sus detalles
         super().save_related(request, form, formsets, change)
         form.instance.recalcular_total()
