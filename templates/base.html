@@ -41,7 +41,14 @@
       <a href="{% url 'lista_insumos' %}">Inventario</a>
       <a href="{% url 'lista_despachos' %}">Despacho</a>
       <a href="/admin/">Admin</a>
-      <a href="{% url 'logout' %}">Salir ({{ user.username }})</a>
+      <!-- logout por POST: django 5+ exige POST (no acepta GET) -->
+      <form action="{% url 'logout' %}" method="post" style="display:inline;margin-left:14px">
+        {% csrf_token %}
+        <button type="submit"
+          style="background:none;border:0;color:#fff;font:inherit;font-size:14px;cursor:pointer;padding:0;text-decoration:none">
+          Salir ({{ user.username }})
+        </button>
+      </form>
     </nav>
     {% endif %}
   </header>
